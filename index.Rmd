@@ -37,7 +37,7 @@ FS09_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project
 
 # U.S. Food Insecurity Map
 
-To understand the degree of necessity for the implementation of urban agriculture and community fridges, we want to look at an overall map of the most recent food insecurity rates within the United States. With the information provided by this data, we want to compare it to poverty rates in the U.S. to determine whether they are significantly correlated. 
+To understand the degree of necessity for the implementation of urban agriculture and community fridges, we want to look at an overall map of the most recent food insecurity rates within the United States. With the information provided by this data, we want to compare it to poverty rates in the U.S. to determine whether they are significantly correlated. The data is from [Feeding America](https://www.feedingamerica.org/research/map-the-meal-gap/by-county).
 
 ## Food Insecurity Rate data for 2020
 ```{r}
@@ -84,7 +84,7 @@ Based on the choropleth map above, we see that most counties in the United State
 
 # U.S. Poverty Line Map
 
-After examining the food insecurity choropleth map above, we wanted to look at what some of the drivers of food insecurity to see which neighborhoods urban agriculture and community fridges should benefit or be implemented within. One driver we predict to correlate with food insecurity is the percent of those below the poverty line. According to the ASPE, the national 2020 poverty guideline was on average 12,760 dollars for one person in a household and 44,120 dollars for up to eight in one household. While the poverty guideline does vary per state, for this study, these averages will represent the entirety of the U.S.
+After examining the food insecurity choropleth map above, we wanted to look at what some of the drivers of food insecurity to see which neighborhoods urban agriculture and community fridges should benefit or be implemented within. One driver we predict to correlate with food insecurity is the percent of those below the poverty line. According to the [ASPE](https://aspe.hhs.gov/topics/poverty-economic-mobility/poverty-guidelines/prior-hhs-poverty-guidelines-federal-register-references/2020-poverty-guidelines), the national 2020 poverty guideline was on average 12,760 dollars for one person in a household and 44,120 dollars for up to eight in one household. While the poverty guideline does vary per state, for this study, these averages will represent the entirety of the U.S. The data is from the United States Census, [SAIPE State and County Estimates for 2020](https://www.census.gov/data/datasets/2020/demo/saipe/2020-state-and-county.html).
 
 ## Poverty Percent Data for 2020
 ```{r}
