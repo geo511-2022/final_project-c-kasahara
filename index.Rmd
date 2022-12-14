@@ -1,105 +1,168 @@
 ---
-title: "My Final Project Template"
-author: Your name here
-subtitle: Subtitle here if desired
+title: "Final Project"
+author: "Candice Kasahara"
+date: '2022-12-13'
+output: html_document
 ---
 
-# Introduction
-
-[~ 200 words]
-
-Clearly stated background and questions / hypotheses / problems being addressed. Sets up the analysis in an interesting and compelling way.
-
-# Materials and methods
-
-[~ 200 words]
-
-Narrative: Clear narrative description of the data sources and methods. Includes data from at least two sources that were integrated / merged in R.
-
-Code: The code associated with the project is well organized and easy to follow. Demonstrates mastery of R graphics and functions.
-
-Data: The underlying data are publicly accessible via the web and downloaded/accessed within the Rmd script. If you want to use your own data, you must make it available on a website (e.g. Figshare) so that others are able to re-run your code.
-
-You can do bullets like this:
-
-* The first most important thing
-* The second most important thing
-* The third most important thing
-
-You can do numbers like this:
-
-1. The first most important thing
-2. The second most important thing
-3. The third most important thing
-
-See [http://rmarkdown.rstudio.com/](http://rmarkdown.rstudio.com/) for all the amazing things you can do.
-
-
-Here's my first code chunk.
-```{r}
-1+2
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
-
-Load any required packages in a code chunk (you may need to install some packages):
-
-```{r, message=F, warning=F}
-library(tidyverse)
-library(leaflet)
-library(kableExtra)
-knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
-```
-
-## Download and clean all required data
-```{r}
-n=20
-data=data.frame(x=runif(n,-180,180),
-                y=runif(n,-60,60),
-                size = runif(n, 5, 20),
-                category = factor(
-                  sample(letters[1:5], n, replace = TRUE)
-                  ),
-                value = rnorm(n))
-```
-
-```{r, results='asis'}
-data %>% 
-  slice(1:10) %>% #show only 1:n rows
-  kable(digits=2,align="c")%>% #make table and round to two digits
-  kable_styling(bootstrap_options = 
-                  c("striped", "hover", "condensed", "responsive")) #apply other formatting
-```
-
-Add any additional processing steps here.
-
-# Results
-
-[~200 words]
-
-Tables and figures (maps and other graphics) are carefully planned to convey the results of your analysis. Intense exploration and evidence of many trials and failures. The author looked at the data in many different ways before coming to the final presentation of the data.
-
-Show tables, plots, etc. and describe them.
-
-```{r, fig.width=6, fig.height=3, fig.cap="Map of completely random data"}
-m <- leaflet(data) %>% 
-  addTiles() %>% 
-  addCircleMarkers(~x, ~y, radius = ~size,color = ~as.factor(category)) %>% 
-  addPopups(~x[2], ~y[2], "Random popup")
-m  # a map with the default OSM tile layer
-```
-
 
 ```{r}
-data %>% 
-  ggplot(aes(x=x,y=y,col=category))+
-  geom_point()
+library(tigris)
+library(ggplot2)
+library(plotly)
+library(maps)
+library(dplyr)
+library(viridis)
+library(tidycensus)
+library(sf)
+
+#food insecurity data
+FS20_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2022_2020-2019Data_ToShare.csv")
+FS19_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2021_2019Data_ToShare.csv")
+FS18_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2020_2018Data_ToShare.csv")
+FS17_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2019_2017Data_ToShare.csv")
+FS16_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2018_2016Data_ToShare.csv")
+FS15_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2017_2015Data_ToShare.csv")
+FS14_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2016_2014Data_ToShare.csv")
+FS13_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2015_2013Data_ToShare.csv")
+FS12_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2014_2012Data_ToShare.csv")
+FS11_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2013_2011Data_ToShare.csv")
+FS10_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2012_2010Data_ToShare.csv")
+FS09_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2011_2009Data_ToShare.csv")
+
 ```
 
-# Conclusions
+# U.S. Food Insecurity Map
 
-[~200 words]
+To understand the degree of necessity for the implementation of urban agriculture and community fridges, we want to look at an overall map of the most recent food insecurity rates within the United States. With the information provided by this data, we want to compare it to poverty rates in the U.S. to determine whether they are significantly correlated. 
 
-Clear summary adequately describing the results and putting them in context. Discussion of further questions and ways to continue investigation.
+## Food Insecurity Rate data for 2020
+```{r}
+FS20_url<- read.csv("https://raw.githubusercontent.com/geo511-2022/final_project-LeahBargnesi/master/data/Map_the_Meal_Gap_Data%20(1)/MMG2022_2020-2019Data_ToShare.csv")
+
+FS2020_data<- FS20_url %>%
+  rename(Food_Insecurity = X..of.Food.Insecure.Persons.Overall..1.Year., Food_Insecurity_Rate = Overall.Food.Insecurity.Rate..1.Year., County = County..State)
+
+FS2020 <- subset(FS2020_data, select = c(State, County, Food_Insecurity_Rate, Food_Insecurity))
+```
+
+## U.S. Food Insecurity Choropleth Map 2020
+```{r}
+USA <- counties(cb = TRUE)
+
+USA_filter = USA %>% 
+  mutate(FIPS = as.integer(GEOID)) %>%
+  filter(!STATE_NAME %in% c("Alaska", "Hawaii", "Guam", "Commonwealth of the Northern Mariana Islands", "Puerto Rico", "American Samoa", "United States Virgin Islands"))
+
+
+US_map = left_join(USA_filter,FS2020_data,by = "FIPS") %>% 
+  mutate(Food_Insecurity_Rate2 = as.numeric(sub("%","",Food_Insecurity_Rate,fixed = T)))
+
+my_breaks <- c(0, 10, 20, 30)
+
+ggplot() +
+  geom_sf(data = US_map, color="transparent", size=0, aes(fill=Food_Insecurity_Rate2)) +
+  labs(title = "Food Insecurity Rates in the U.S. (by County) in 2020", 
+       caption = "Source: Map the Meal Gap 2022 - Feeding America") +
+  theme_bw(13) +
+  theme(plot.caption= element_text(size=7,
+                                   color="blue",
+                                   vjust = 5)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_gradientn(colours=rev(magma(6)),
+                         name="Food Insecurity Rate",
+                         na.value = "grey100",
+                        breaks = my_breaks, labels = my_breaks)
+  
+
+```
+
+Based on the choropleth map above, we see that most counties in the United States are experiencing food insecurity between 10-20%. There are some exceptions below 10%, especially in North Dakota. More noticeably, there are a significant number of counties that are facing food insecurity rates beyond 20%, most noticeably in South Dakota and spread throughout the southern portion of the U.S. As seen in the graph, food insecurity clearly threatens a significant portion of the U.S., which opens up the field of urban agriculture and community fridges to decrease some of the food insecurity being experienced.
+
+# U.S. Poverty Line Map
+
+After examining the food insecurity choropleth map above, we wanted to look at what some of the drivers of food insecurity to see which neighborhoods urban agriculture and community fridges should benefit or be implemented within. One driver we predict to correlate with food insecurity is the percent of those below the poverty line. According to the ASPE, the national 2020 poverty guideline was on average 12,760 dollars for one person in a household and 44,120 dollars for up to eight in one household. While the poverty guideline does vary per state, for this study, these averages will represent the entirety of the U.S.
+
+## Poverty Percent Data for 2020
+```{r}
+US_poverty <- read.csv("poverty.csv", skip = 5) [-1,] %>%
+  mutate(FIPS = paste0(
+    sprintf("%02d",State.FIPS.Code),
+    sprintf("%03d",County.FIPS.Code)),
+    Poverty_Percent=as.numeric(Poverty.Percent..All.Ages))
+```
+
+## U.S. Poverty Percent Choropleth Map 2020
+```{r}
+
+USA_filtered = USA %>% 
+  mutate(FIPS = as.character(GEOID)) %>%
+  filter(!STATE_NAME %in% c("Alaska", "Hawaii", "Guam", "Commonwealth of the Northern Mariana Islands", "Puerto Rico", "American Samoa", "United States Virgin Islands"))
+
+
+Poverty_map = left_join(USA_filtered,US_poverty,by = "FIPS")
+
+my_breaks <- c(0, 10, 20, 30)
+
+ggplot() +
+  geom_sf(data = Poverty_map, color="transparent", size=0, aes(fill=Poverty_Percent)) +
+  labs(title = "Poverty Rates in the U.S. (by County) in 2020", 
+       caption = "Source:  U.S. Census Bureau, Small Area Income
+       and Poverty Estimates (SAIPE) Program") +
+  theme_bw(13)+
+  theme(plot.caption= element_text(size=7,
+                                   color="blue",
+                                   vjust = 5)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_fill_gradientn(colours=rev(viridis(6)),
+                         name="Poverty Rate",
+                         na.value = "grey100",
+                        breaks = my_breaks, labels = my_breaks)
+
+```
+
+In this choropleth map, we see a similar trend as the food insecurity choropleth map. Overall, the poverty percent ranges from 5-20%. However, like the food insecurity map, some South Dakota counties appear to face a noticeably higher poverty rate, with over 30%, than other parts of the country. Similarly, the southern section of the U.S. shows between 20-30% poverty rate. Overall, we can see that there is high degree of correlation between poverty rate and percent of food insecurity.
+
+# New York Poverty Percent vs. Food Insecurity
+
+Seeing the visual correlation between the food insecurity and poverty percent choropleth maps, we deemed that it was significant enough to examine through a dot plot. We narrowed down our search to New York State since there are currently multiple initiatives that are combating food scarcity. If there is a noticeable correlation between food insecurity and percent poverty, then this information could be used to further push the implementation and funding for these efforts.
+
+## Poverty Percent vs Food Insecurity Data
+```{r}
+Poverty <- US_poverty %>%
+  mutate(FIPS = as.integer(FIPS))
+
+Overall_map = left_join(Poverty,FS2020_data, by = "FIPS")
+
+Overall2 <- Overall_map %>%
+  filter(Postal.Code == "NY", Year == "2020") %>%
+   mutate(Food_Insecurity_Rate2 = as.numeric(sub("%","",Food_Insecurity_Rate,fixed = T)))
+
+# Separating values needed for graphing
+Overall3 <- subset(Overall2, select = c(FIPS, Food_Insecurity_Rate2, Poverty_Percent))
+```
+
+## Visualizing Poverty Percent and Food Insecurity Correlation
+```{r}
+dot_plot <- ggplot(Overall3, aes(x = Poverty_Percent, y = Food_Insecurity_Rate2)) +
+  geom_point() +
+  geom_smooth() +
+  labs(title = "Poverty Percent vs. Food Insecurity in NYS Counties (2020)", x = "Poverty Percent", y = "Food Insecurity Rate") +
+  theme_minimal(13) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+dot_plot
+```
+
+In this dot plot, we see a clear correlation between poverty percent and food insecurity. As the poverty percent increases, food insecurity increases linearly as well. With this visualization, it is clear that efforts to reduce food insecurity could aid those who do not surpass the poverty line in New York State.
 
 # References
 
-All sources are cited in a consistent manner
+Gundersen, C., Strayer, M., Dewey, A., Hake, M., & Engelhard, E. (2022). Map the Meal Gap 2022: An Analysis of County and Congressional District Food Insecurity and County Food Cost in the United States in 2020. Feeding America. 
+
+2020 Poverty and Median Household Income Estimates - Counties, States, and National
+Source:  U.S. Census Bureau, Small Area Income and Poverty Estimates (SAIPE) Program
+Release date:  December 2021
